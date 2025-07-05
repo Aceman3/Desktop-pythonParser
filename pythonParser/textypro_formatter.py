@@ -93,7 +93,7 @@ def run_gui():
         dnd_enabled = False
 
     root.title("TextyPro Formatter")
-    root.geometry("480x320")
+    root.geometry("1080x720")
     root.configure(bg="#f4f6fb")
 
     title_label = tk.Label(root, text="TextyPro CSV Formatter", font=("Helvetica", 18, "bold"), bg="#f4f6fb", fg="#2d3e50", pady=10)
