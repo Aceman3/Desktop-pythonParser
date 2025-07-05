@@ -68,9 +68,13 @@ def run_gui():
     def process_file(file_path):
         try:
             output_path = os.path.join(os.path.dirname(file_path), 'formatted_textypro.csv')
+            progress_label.config(text="Processing...", fg="blue")
+            root.update_idletasks()
             convert_to_textypro(file_path, output_path)
+            progress_label.config(text="Success! Output saved to: {}".format(output_path), fg="green")
             messagebox.showinfo("Success", f"Output saved to: {output_path}")
         except Exception as e:
+            progress_label.config(text="Error: {}".format(str(e)), fg="red")
             messagebox.showerror("Error", str(e))
 
     def drop(event):
@@ -89,17 +93,40 @@ def run_gui():
         dnd_enabled = False
 
     root.title("TextyPro Formatter")
-    root.geometry("400x200")
-    label = tk.Label(root, text="Drag and drop your CSV file or click to select.", pady=20)
-    label.pack()
-    select_btn = tk.Button(root, text="Select CSV File", command=select_file, width=20, height=2)
-    select_btn.pack(pady=30)
+    root.geometry("480x320")
+    root.configure(bg="#f4f6fb")
+
+    title_label = tk.Label(root, text="TextyPro CSV Formatter", font=("Helvetica", 18, "bold"), bg="#f4f6fb", fg="#2d3e50", pady=10)
+    title_label.pack()
+
+    desc_label = tk.Label(root, text="Easily format your CSV for TextyPro. Drag and drop or select a file.", font=("Helvetica", 11), bg="#f4f6fb", fg="#4e5d6c")
+    desc_label.pack(pady=(0, 10))
+
+    select_btn = tk.Button(root, text="Select CSV File", command=select_file, width=22, height=2, bg="#4e8cff", fg="white", font=("Helvetica", 12, "bold"), activebackground="#357ae8", activeforeground="white", bd=0, relief="ridge", cursor="hand2")
+    select_btn.pack(pady=10)
+    select_btn.bind("<Enter>", lambda e: select_btn.config(bg="#357ae8"))
+    select_btn.bind("<Leave>", lambda e: select_btn.config(bg="#4e8cff"))
+    select_btn.tooltip = tk.Label(root, text="Click to browse and select a CSV file.", font=("Helvetica", 9), bg="#f4f6fb", fg="#888", bd=0)
+
+    progress_label = tk.Label(root, text="", font=("Helvetica", 10), bg="#f4f6fb", fg="#2d3e50")
+    progress_label.pack(pady=5)
 
     if dnd_enabled:
-        root.drop_target_register('DND_Files')
-        root.dnd_bind('<<Drop>>', drop)
+        drop_area = tk.Label(root, text="⬇️ Drag and drop your CSV file here ⬇️", font=("Helvetica", 12, "italic"), bg="#eaf0fb", fg="#4e5d6c", width=40, height=4, bd=2, relief="groove")
+        drop_area.pack(pady=15)
+        drop_area.drop_target_register('DND_Files')
+        drop_area.dnd_bind('<<Drop>>', drop)
+        drop_area.tooltip = tk.Label(root, text="Drag and drop a CSV file to process.", font=("Helvetica", 9), bg="#f4f6fb", fg="#888", bd=0)
     else:
-        label.config(text="Drag and drop (requires tkinterdnd2) or click to select.")
+        drop_area = tk.Label(root, text="Drag and drop (requires tkinterdnd2) or click to select.", font=("Helvetica", 12, "italic"), bg="#eaf0fb", fg="#4e5d6c", width=40, height=4, bd=2, relief="groove")
+        drop_area.pack(pady=15)
+
+    # About/info button
+    def show_about():
+        messagebox.showinfo("About", "TextyPro Formatter\n\n- Drag and drop or select a CSV file.\n- Formats for TextyPro import.\n- Created using Python and Tkinter.")
+
+    about_btn = tk.Button(root, text="About", command=show_about, width=8, bg="#eaf0fb", fg="#2d3e50", font=("Helvetica", 10), bd=0, relief="ridge", cursor="hand2")
+    about_btn.pack(side="bottom", pady=8)
 
     root.mainloop()
 
